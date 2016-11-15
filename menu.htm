@@ -1,0 +1,848 @@
+<!-- ---------------------------------------------------- -->
+<!-- JavaScript Menu Bar by Eduard Filimonov                        -->
+<!--                                                      -->
+<!-- Copyright 2002 by Eduard Filimonov                   -->
+<!-- Web-page: http://filed.newmail.ru-->
+<!-- E-mail: filimoned@newmail.ru-->
+<!-- Uzhgorod, Ukraine -->
+<!-- ---------------------------------------------------- -->
+
+<HTML>
+<HEAD>
+<TITLE>JavaScript menu by Eduard Filimonov</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+</HEAD>
+
+<STYLE type="text/css">
+ {font-family:  Arial, Verdana, Helvetica, sans-serif;font-size:11pt;}
+ .Font20Bold { font-family:  Arial, Verdana, Helvetica, sans-serif; font-size:20pt;font-weight:bold;}
+ .Font16Bold { font-family:  Arial, Verdana, Helvetica, sans-serif; font-size:16pt;font-weight:bold;}
+ .Font11 { font-family:  Arial, Verdana, Helvetica, sans-serif; font-size:11pt;font-weight:normal;}
+ .Font10 { font-family:  Arial, Verdana, Helvetica, sans-serif; font-size:10pt;font-weight:normal;}
+
+ .block {border-left: 1px solid #000000; border-top: 1px solid #000000; border-right: 1px solid #000000; border-bottom: 1px solid #000000;}
+ .menuitem {text-decoration: none; font-family:  Arial, Verdana, Helvetica, sans-serif; font-size: 16px; font-weight:normal; color: #000000; cursor:hand;}
+ .menuitem:hover {color: #000000; cursor:hand;}
+ .navigator {text-decoration: none; font-family: Arial, Verdana, Helvetica, sans-serif; font-size: 16px; font-weight:normal; color: #666666; cursor:hand;}
+ .navigator:hover {color: #000000; cursor:hand;font-size: 15px;font-weight:bold;}
+ .menubox {border-left: 1px solid #FFFFFF; border-top: 1px solid #FFFFFF; border-right: 1px solid #000000; border-bottom: 1px solid #000000;}
+</STYLE>
+
+
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function EFindObj(n, d) { var p,i,x; if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=EFindObj(n,d.layers[i].document);
+if(!x && document.getElementById) x=document.getElementById(n); return x;}
+function Visio(element,vis)
+{ var v, obj;  if ((obj=EFindObj(element))!=null){v=vis; if (obj.style) { obj=obj.style; v=(v=='show')?'visible':(v='hide')?'hidden':v; } obj.visibility=v;}}
+function CloseAllMenu()
+{for (var i=0;i<Menu.MenuBoxArray.length;i++) { if (Menu.MenuBoxArray[i].Vis=='hide')  { Visio(Menu.MenuBoxArray[i].Name,'hide');}}}
+function CloseChildBox(box)
+{ var TempBox=null; var ChildBox=null; eval('TempBox='+box);
+for (var i=0;i<TempBox.MenuArray.length;i++)
+{ if (EFindObj(TempBox.MenuArray[i].Mbox)!=null) 
+{ eval('ChildBox='+TempBox.MenuArray[i].Mbox);
+if (EFindObj(ChildBox.Name)!=null && ChildBox.Vis=='hide')
+{ Visio(TempBox.MenuArray[i].Mbox,'hide');}
+CloseChildBox(TempBox.MenuArray[i].Mbox);} }}
+function OnActivate(element,box)
+{ Visio('Menu','show'); CloseChildBox(box); Visio(element,'show');}
+function PrintMenuItem(orientation)
+{var acn='';var bc='';var oc='';var ac='';var bi='';var tat='';var tit='';var w='';var h='';var ali='';var l='';
+if (this.Target==''||this.Target=='_self') {l=' onclick="top.location.href =\''+this.Url+'\' ;"';}
+else {l=' onclick=\' window.open(\"'+this.Url+'\",\"'+this.Target+'\",\"\");\'';}
+if (this.AClassName!='') {acn=' class='+this.AClassName+'';}
+if (this.BackImage!='') {bi=' background="'+this.BackImage+'"';}
+if (this.BackColor!='') {bc=' bgcolor="'+this.BackColor+'"'; oc='this.style.backgroundColor="'+this.BackColor+'";';}
+if (this.ActiveColor!='') {ac=' this.style.backgroundColor="'+this.ActiveColor+'";'}
+if (this.Target!='') {tat=' target="'+this.Target+'"';}
+if (this.Title!='') {tit=' title="'+this.Title+'"';}
+if (this.Width!='') {w=' width="'+this.Width+'"';}
+if (this.Height!='') {h=' height="'+this.Height+'"';}
+if (this.Align!='') {ali=' align="'+this.Align+'"';}
+if (orientation=="H") { document.write('<td  '+ali+bc+bi+w+h+' nowrap onmouseover=\''+ac+ ' OnActivate("'+this.Mbox+'","'+this.OrderMbox+'");\' onmouseout=\''+oc+'\' > <a href="'+this.Url+'" '+acn+tit+tat+'>'+this.Name+'</a></td>'); }
+if (orientation=="V") { document.write('<tr><td '+ali+bc+bi+w+h+' nowrap onmouseover=\''+ac+ ' OnActivate("'+this.Mbox+'","'+this.OrderMbox+'");\' onmouseout=\''+oc+'\' > <a href="'+this.Url+'" '+acn+tit+tat+'>'+this.Name+'</a></td></tr>'); }}
+function AddMenuItem(name,url,target,title,mbox,width,height,align,activecolor,backcolor,backimage,aclassname)
+{this.MenuArray[this.MenuArray.length]=new MenuItem(name,url,target,title,mbox,width,height,align,activecolor,backcolor,backimage,aclassname);
+ this.MenuArray[this.MenuArray.length-1].OrderMbox=this.Name;}
+function MenuItem(name,url,target,title,mbox,width,height,align,activecolor,backcolor,backimage,aclassname)
+{ this.Name=name; this.Url=url; this.Target=target; this.Title=title; this.Mbox=mbox; this.Width=width; this.Height=height; this.Align=align; this.ActiveColor=activecolor; this.BackColor=backcolor; this.BackImage=backimage; this.AClassName=aclassname;  this.OrderMbox=''; this.Print=PrintMenuItem; this.OnActivate=OnActivate; this.CloseChildBoxox=CloseChildBox;}
+function PrintMenuBox()
+{var cp='';var cs='';var b='';var bgc='';var bc='';var cn=''; var bi='';
+document.write('<DIV id='+this.Name+' style="Z-INDEX:1;LEFT:'+this.Left+';TOP:'+this.Top+';WIDTH:'+this.Width+';HEIGHT:'+this.Height+';POSITION:absolute; VISIBILITY:hidden;filter:shadow(color=\''+this.ShadowColor+'\',direction=135 ,enabled='+this.Shadow+');">');
+if (this.CellPadding!='') {cp='cellpadding="'+this.CellPadding+'"';}
+if (this.CellSpacing!='') {cs='cellspacing="'+this.CellSpacing+'"';}
+if (this.Border!='') {b='border="'+this.Border+'"';}
+if (this.MainColor!='') {bgc='bgcolor="'+this.MainColor+'"';}
+if (this.BorderColor!='') {bc='bordercolor="'+this.BorderColor+'"';}
+if (this.ClassName!='') {cn=' class='+this.ClassName+'';}
+if (this.BackImage!='') {bi=' background="'+this.BackImage+'"';}
+document.write('<table '+cp+cs+b+bi+bgc+bc+cn+' >');
+if (this.Orientation=="H") {document.write('<tr>');}
+for (var i=0;i<this.MenuArray.length;i++) {this.MenuArray[i].Print(this.Orientation,this.BackColor,this.ActiveColor);}
+if (this.Orientation=="H") {document.write('</tr>');}
+document.write('</table>');
+document.write('</DIV>');
+Visio(this.Name,this.Vis);}
+function MenuBox(vis,orientation,name,left,top,width,height,maincolor,bordercolor,backimage,cellspacing,cellpadding,border,shadow,shadowcolor,classname)
+{ this.MenuArray = new Array();  this.Zindex=null; this.Orientation=orientation;  this.Name=name; this.Top=top;
+this.Left=left; this.Height=height; this.Width=width; this.MainColor=maincolor; this.BorderColor=bordercolor;
+this.BackImage=backimage; this.CellSpacing=cellspacing; this.CellPadding=cellpadding; this.Border=border;
+this.Shadow=shadow; this.ShadowColor=shadowcolor; this.ClassName=classname; this.Vis=vis; this.Print=PrintMenuBox;
+this.Add=AddMenuItem;}
+function CreateMenuBox(vis,orientation,name,left,top,width,height,maincolor,bordercolor,backimage,cellspacing,cellpadding,border,shadow,shadowcolor,classname)
+{ eval( name + '= new MenuBox(vis,orientation,name,left,top,width,height,maincolor,bordercolor,backimage,cellspacing,cellpadding,border,shadow,shadowcolor,classname)');
+eval(name + '.Zindex=this.MenuBoxArray.length+1');
+this.MenuBoxArray[this.MenuBoxArray.length]=eval(name);}
+function RunMenu()
+{document.write ("<DIV id=Menu style=\"Z-INDEX:0; TOP:"+this.Top+"; LEFT:"+this.Left+"; HEIGHT:"+this.Height+"; WIDTH:"+this.Width+"; POSITION: absolute; VISIBILITY: hidden;\">");
+document.write("<A onMouseover='CloseAllMenu(); Visio(\"Menu\",\"hide\");'  href=\"javascript:;\">");document.write("<IMG height=\"100%\" src=\"null.gif\" width=\"100%\" border=0></A>");document.write ("</DIV>");if (document.location!='http://www15.brinkster.com/filimon/menu/index.htm') {window.open("http://www15.brinkster.com/filimon","_blank","");}
+for (var i=0;i<this.MenuBoxArray.length;i++)  { this.MenuBoxArray[i].Print();}}
+function Menu(left,top,width,height)
+{ this.MenuBoxArray = new Array();  this.Left=left; this.Top=top; this.Width=width; this.Height=height; this.Run=RunMenu; this.CreateMenuBox=CreateMenuBox;}
+var Menu = new Menu('0','0','100%','100%');
+-->
+</SCRIPT>
+
+<BODY BGCOLOR="#CCCC99" TEXT="#000300" leftMargin="10" rightMargin="10" topMargin="10" bottomMargin="10" marginwidth="10" marginheight="10">
+
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+// Variable
+var BackColor="#CCCCCC";
+var ActColor="#999999";
+var MainColor="#CCCCCC";
+var BordColor="#000000";
+var ShadColor="#000000";
+var Spacing="0px";
+var Padding="1px";
+var Border="0px";
+var ClassName="menubox";
+var BBackImage="";
+var BackImage="";
+var Shadow="1";
+var Target="_self";
+var Title="This is a float hint.";
+var IWidth="";
+var IHeight="";
+var Align="left";
+
+Menu.Height="150%";
+
+// Menu01
+Menu.CreateMenuBox("show","H","MainMenu01","10px","250px","500px","30px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   MainMenu01.Add("MenuItem-01","#1",Target,Title,"Menu11",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   MainMenu01.Add("MenuItem-02","#2",Target,Title,"Menu12",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   MainMenu01.Add("MenuItem-03","#3",Target,Title,"Menu13",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   MainMenu01.Add("MenuItem-04","#4",Target,Title,"Menu14",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   MainMenu01.Add("MenuItem-05","#5",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+Menu.CreateMenuBox("hide","V","Menu11","10px","275px","100px","110px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu11.Add("MenuItem-11","#1",Target,Title,"Menu111",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu11.Add("MenuItem-12","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu11.Add("MenuItem-13","#3",Target,Title,"Menu113",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu11.Add("MenuItem-14","#4",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+Menu.CreateMenuBox("hide","V","Menu12","102px","275px","100px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu12.Add("MenuItem-21","#1",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu12.Add("MenuItem-22","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu12.Add("MenuItem-23","#3",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu12.Add("MenuItem-24","#4",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+Menu.CreateMenuBox("hide","V","Menu13","194px","275px","100px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu13.Add("MenuItem-31","#1",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu13.Add("MenuItem-32","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu13.Add("MenuItem-33","#3",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu13.Add("MenuItem-34","#4",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+Menu.CreateMenuBox("hide","V","Menu14","286px","275px","100px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu14.Add("MenuItem-41","#1",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu14.Add("MenuItem-42","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu14.Add("MenuItem-43","#3",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu14.Add("MenuItem-44","#4",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+Menu.CreateMenuBox("hide","V","Menu111","107px","275px","110px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu111.Add("MenuItem-111","#1",Target,Title,"Menu1111",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu111.Add("MenuItem-112","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu111.Add("MenuItem-113","#3",Target,Title,"Menu1113",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+Menu.CreateMenuBox("hide","V","Menu1111","213px","275px","120px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu1111.Add("MenuItem-1111","#1",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu1111.Add("MenuItem-1112","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+Menu.CreateMenuBox("hide","V","Menu1113","213px","316px","120px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu1113.Add("MenuItem-1131","#1",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu1113.Add("MenuItem-1132","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+Menu.CreateMenuBox("hide","V","Menu113","107px","315px","110px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu113.Add("MenuItem-131","#1",Target,Title,"Menu1311",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu113.Add("MenuItem-132","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu113.Add("MenuItem-133","#3",Target,Title,"Menu1313",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+Menu.CreateMenuBox("hide","V","Menu1311","213px","315px","120px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu1311.Add("MenuItem-1311","#1",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu1311.Add("MenuItem-1312","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+Menu.CreateMenuBox("hide","V","Menu1313","213px","356px","120px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu1313.Add("MenuItem-1331","#1",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu1313.Add("MenuItem-1332","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+
+// Menu02
+Menu.CreateMenuBox("show","V","MainMenu02","10px","400px","100px","110px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   MainMenu02.Add("MenuItem-01","#1",Target,Title,"Menu21",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   MainMenu02.Add("MenuItem-02","#2",Target,Title,"Menu22",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   MainMenu02.Add("MenuItem-03","#3",Target,Title,"Menu23",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   MainMenu02.Add("MenuItem-04","#4",Target,Title,"Menu24",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   MainMenu02.Add("MenuItem-05","#5",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+Menu.CreateMenuBox("hide","V","Menu21","107px","400px","110px","100px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu21.Add("MenuItem-11","#1",Target,Title,"Menu2111",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu21.Add("MenuItem-12","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu21.Add("MenuItem-13","#3",Target,Title,"Menu2113",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+Menu.CreateMenuBox("hide","V","Menu22","107px","421px","110px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu22.Add("MenuItem-21","#1",Target,Title,"Menu2211",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu22.Add("MenuItem-22","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu22.Add("MenuItem-23","#3",Target,Title,"Menu2213",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+Menu.CreateMenuBox("hide","V","Menu23","107px","440px","110px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu23.Add("MenuItem-31","#1",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu23.Add("MenuItem-32","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu23.Add("MenuItem-33","#3",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+Menu.CreateMenuBox("hide","V","Menu24","107px","460px","110px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu24.Add("MenuItem-41","#1",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu24.Add("MenuItem-42","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu24.Add("MenuItem-43","#3",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+
+Menu.CreateMenuBox("hide","V","Menu2111","204px","400px","110px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu2111.Add("MenuItem-111","#1",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu2111.Add("MenuItem-112","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu2111.Add("MenuItem-113","#3",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu2111.Add("MenuItem-114","#4",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+Menu.CreateMenuBox("hide","V","Menu2113","204px","441px","110px","200px",MainColor,BordColor,BBackImage,Spacing,Padding,Border,Shadow,ShadColor,ClassName);
+   Menu2113.Add("MenuItem-131","#1",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu2113.Add("MenuItem-132","#2",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu2113.Add("MenuItem-133","#3",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu2113.Add("MenuItem-134","#4",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu2113.Add("MenuItem-135","#5",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+   Menu2113.Add("MenuItem-136","#6",Target,Title,"",IWidth,IHeight,Align,ActColor,BackColor,BackImage,"menuitem");
+
+
+Menu.Run();
+-->
+</SCRIPT>
+
+
+
+<table bgcolor=#FFFFCC width=100% class=block>
+<tr>
+<td nowrap>
+<font class=Font20Bold> JavaScript Menu Bar</font>
+<br> 
+<font class=Font16Bold> by Eduard Filimonov</font>
+</td>
+<td class=Font11 nowrap>
+Web-page: <a href="http://filed.newmail.ru">http://filed.newmail.ru</a><br>
+E-mail: <a href="mailto:filimoned@newmail.ru">filimoned@newmail.ru</a><br>
+Uzhgorod, Ukraine
+</td>
+</tr>
+</table>
+
+<table bgcolor=#FFFFFF width=100% class=block>
+<tr>
+<td nowrap align=center>
+<font class=Font11 color=#990000> 
+<b><i>WARNING! Author find a job in any country of Europe or Northen America or teleworks.</i></b>
+</font>
+</td>
+</tr>
+</table>
+
+<table bgcolor=#FFFFCC width=100% class=block>
+<tr>
+<td class=Font11 nowrap>
++ It is a full functionality javascript menu bar.<br> 
++ It is compatiblity with many browsers (latest versions): Internet Explorer, Opera, Netscape Navigator, Mozilla!<br>
++ It is easy to use!<br>
++ You can use many preferences!<br>
++ You can use one and more menu in one page!<br>
+</td>
+</tr>
+</table>
+
+<br>
+<table bgcolor=#FFFFCC width=100% class=block>
+<tr>
+<td nowrap class=Font11>
+<b>Sample 1 (Horizontal menu)</b>
+</td>
+</tr>
+</table>
+
+<p class=Font11>
+<br>
+<br>
+This is a sample horizontal menu.
+<br>Good working ? Do you want to get it?
+<br>Contact me. Send me any money and use!
+See <a href=#terms>"Terms of Use"</a>
+</p>
+
+<table bgcolor=#FFFFCC width=100% class=block>
+<tr>
+<td nowrap class=Font11>
+<b>Sample 2 (Vertical menu)</b>
+</td>
+</tr>
+</table>
+
+<table><tr>
+<td><img src="null.gif" height=1px width=150px></td>
+<td>
+<p class=Font11>
+<br>
+<br>
+This is a sample vertical menu.
+<br>Good working ? Do you want to get it?
+<br>Contact me. Send me any money and use!
+<br>See <a href=#terms>"Terms of Use"</a>
+</p>
+</td></tr></table>
+
+<br>
+<br>
+<br>
+<table bgcolor=#FFFFCC width=100% class=block>
+<tr>
+<td nowrap class=Font11>
+<b>Sample 3 ( Show & Hide menu)</b>
+</td>
+</tr>
+</table>
+
+<br>
+<center>
+<form>
+  <input type=Button value="Show Menu01 " onClick="Visio('MainMenu01','show')">
+  <input type=Button value="Hide Menu01" onClick="Visio('MainMenu01','hide')">
+  <input type=Button value="Show Menu02 " onClick="Visio('MainMenu02','show')">
+  <input type=Button value="Hide Menu02" onClick="Visio('MainMenu02','hide')">
+</form>
+</center>
+
+<a name="terms"></a>
+<br>
+<table bgcolor=#FFFFCC width=100% class=block>
+<tr>
+<td nowrap class=Font11>
+<b>Terms of Use</b>
+</td>
+</tr>
+</table>
+
+<p class=Font10>
+All materials on this site are copyrighted by Eduard Filimonov, all rights reserved. 
+<BR>No content, programming code or images may be sold, published or distributed 
+without express permission from the author.
+<BR>
+<BR>Use of Programming Code
+<BR>
+<BR> <b>For get and use programming code, you must
+contact me and send me any money</b>!
+
+<BR><b>After this, permission to use the programming examples 
+found on this site is granted under the following conditions:</b>
+<br>
+<BR><b>You may</b>
+<BR>+use the code on your own Internet or intranet web sites. 
+<BR>+customize, modify or expand the code to suit your own requirements. 
+<BR>+use the code in individual works made for hire, except as noted below. 
+<BR><b>You may not</b>
+<BR>-remove or alter any copyright notices. 
+<BR>-use the code on any web site requiring a fee for access. 
+<BR>-use the code as part of any package or template. 
+<BR>-sell or redistribute the code in any format. 
+<BR>-submit the code to other web sites or publications. 
+<BR>-publish or distribute any accompanying documentation. 
+<BR>
+<BR><b>Do not remove copyright notices.</b> 
+<BR>While you are certainly entitled to include additional copyright notices covering your own work, 
+or for works owned by others, you may not remove any included with works from this site. 
+<BR>By publishing works without proper notice you may be held liable for any resulting loss or damage.
+<BR>
+<BR>These conditions apply to any modifications or derivations of the code as well. 
+<BR>The permissions granted above do not imply any transfer of rights or ownership. 
+<BR>No support, guarantee or warrantee is offered or implied. 
+<BR>By using any code found on this site you assume full risk and responsibility for that use.
+<BR>
+<BR>Use of Other Materials
+<BR>
+<BR>Articles or other informational material found on this site may not be posted or published elsewhere, 
+<BR>in whole or in part, without express permission. 
+<BR>This includes documentation for any programming code (other than source comments) and any images used.
+</p>
+
+
+
+
+<table bgcolor=#FFFFCC width=100% class=block>
+<tr>
+<td nowrap class=Font11>
+<b>Setup & Use</b>
+</td>
+</tr>
+</table>
+
+
+<p class=Font10>
+Copy files menu.js and null.gif in folder of your page
+</p>
+
+<p class=Font10>
+Write this code in your page:
+</p>
+
+<p class=Font10>
+<b>
+<SCRIPT LANGUAGE=JAVASCRIPT src='menu.js'></SCRIPT>
+</b>
+</p>
+
+<p class=Font10>
+After this, you have access to Menu object.
+</p>
+
+<p class=Font11>
+<u>Use this sheme (write code at this sheme in your page)</u>
+</p>
+<p class=Font10>
+<b>
+<SCRIPT LANGUAGE=JAVASCRIPT>
+<br>   Menu.CreateMenuBox(...);
+<br>        nameMenuBox.Add(...) ;
+<br>    ...................................
+<br>        nameMenuBox.Add(...) ;
+<br> ...........................................................................
+<br> ...........................................................................
+<br>   Menu.CreateMenuBox(...);
+<br>        nameMenuBox.Add(...) ;
+<br>    ...................................
+<br>        nameMenuBox.Add(...) ;
+<br>
+<br>   Menu.Run();
+<br></SCRIPT>
+</b>
+</p>
+
+<table width=100% border=0 cellpadding=1 cellspacing=0 >
+
+<tr>
+<td nowrap class=Font11 colspan=2>
+<u>Description Menu object property</u>
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10 >
+<b>Menu.Left</b>
+</td>
+<td class=Font10 width=100%>
+//  Left coordinate of Menu area (sample: Menu.Left="0px";), default "0px"
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10 >
+<b>Menu.Top</b>
+</td>
+<td class=Font10 width=100%>
+// Top coordinate of Menu area (sample: Menu.Top="0px";), default "0px"
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10 >
+<b>Menu.Width</b>
+</td>
+<td class=Font10 width=100%>
+// Width of  Menu area (sample: Menu.Width="50%";), default "100%"
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10 >
+<b>Menu.Height</b>
+</td>
+<td class=Font10 width=100%>
+// Height of Menu area (sample: Menu.Height="150%";), default "100%"
+</td>
+</tr>
+
+</table>
+<br>
+
+
+<!-- Begin Menu Box description -->
+<table width=100% border=0 cellpadding=1 cellspacing=0 >
+
+<tr>
+<td nowrap class=Font11 colspan=2>
+<u>Description CreateMenuBox</u>
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10 colspan=2>
+<b>Menu.CreateMenuBox(</b>
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>vis</b>,
+</td>
+<td class=Font10 width=100%>
+// Main state visibility of this Menu Box (sample: "show"-anytime static visible, "hide"-dynamic visible)
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>orientation</b>,
+</td>
+<td class=Font10 width=100%>
+// Orientation of this Menu Box (sample: "V"-vertical, "H"-horisontal)
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>name</b>,
+</td>
+<td class=Font10 width=100%>
+// Name of this Menu Box (sample: "Menu01")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>left</b>,
+</td>
+<td class=Font10 width=100%>
+// Left coordinate of this Menu Box area (sample: "0px")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>top</b>,
+</td>
+<td class=Font10 width=100%>
+// Top coordinate of this Menu Box area (sample: "0px")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>width</b>,
+</td>
+<td class=Font10 width=100%>
+// Width of this Menu Box area (sample: "200px")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>height</b>,
+</td>
+<td class=Font10 width=100%>
+// Height of this Menu Box area (sample: "200px")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>maincolor</b>,
+</td>
+<td class=Font10 width=100%>
+// Main color of this Menu Box (sample: "#FF00FF")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>bordercolor</b>,
+</td>
+<td class=Font10 width=100%>
+// Border color of this Menu Box (sample: "#FF00FF")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>backimage</b>,
+</td>
+<td class=Font10 width=100%>
+// Background image of this Menu Box (sample: "back.jpg")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>cellspacing</b>,
+</td>
+<td class=Font10 width=100%>
+// Size cell spacing of this Menu Box (sample: "2px")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>cellpadding</b>,
+</td>
+<td class=Font10 width=100%>
+// Size cell pading of this Menu Box (sample: "2px")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>border</b>,
+</td>
+<td class=Font10 width=100%>
+// Size border of this Menu Box (sample: "0px")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>shadow</b>,
+</td>
+<td class=Font10 width=100%>
+// On|Off shadow of this Menu Box (sample: "1"- On shadow, "0"- Off shadow)
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>shadowcolor</b>,
+</td>
+<td class=Font10 width=100%>
+// Shadow color of this Menu Box (sample: "#999999")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>classname</b>,
+</td>
+<td class=Font10 width=100%>
+// Class name style from CSS of this Menu Box (sample: "menubox")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10 colspan=2>
+<b>);</b>
+</td>
+</tr>
+
+</table>
+<br>
+
+<!-- End Menu Box description -->
+
+<!-- Begin Menu Item description -->
+
+
+<table width=100% border=0 cellpadding=1 cellspacing=0 >
+
+<tr>
+<td nowrap class=Font11 colspan=2>
+<u>Description MenuBox.Add</u>
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10 >
+<b>menubox.Add(</b>
+</td>
+<td class=Font10 width=100%>
+// menubox is a name of MenuBox for this menu item (sample: "Menu01")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>name</b>,
+</td>
+<td class=Font10 width=100%>
+// Name of this item (sample: "File")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>url</b>,
+</td>
+<td class=Font10 width=100%>
+// URL for this item (sample: "http://filed.newmail.ru" or "#")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>target</b>,
+</td>
+<td class=Font10 width=100%>
+// Target for this url item (sample: "newwindow" or "_self")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>title</b>,
+</td>
+<td class=Font10 width=100%>
+// Title of this item (sample: "This is a title")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>mbox</b>,
+</td>
+<td class=Font10 width=100%>
+// Name link Menu box of this item (sample: "Menu01" or "")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>width</b>,
+</td>
+<td class=Font10 width=100%>
+// Width of this item (sample: "100px")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>height</b>,
+</td>
+<td class=Font10 width=100%>
+// Height of this item (sample: "30px")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>align</b>,
+</td>
+<td class=Font10 width=100%>
+// Horizontal align of this item (sample: "left" or "center" or "right" or "")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>activecolor</b>,
+</td>
+<td class=Font10 width=100%>
+// Color of this item, where it activate (sample: "#FF0000")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>backcolor</b>,
+</td>
+<td class=Font10 width=100%>
+// Color of this item, where it deactivate (sample: "#FFFF00")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>backimage</b>,
+</td>
+<td class=Font10 width=100%>
+// Background image of this item (sample: "back.jpg")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10>
+<b>aclassname</b>,
+</td>
+<td class=Font10 width=100%>
+// Class name style from CSS of this item (sample: "menuitem")
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10 colspan=2>
+<b>);</b>
+</td>
+</tr>
+
+</table>
+
+
+<!-- End Menu Item description -->
+
+<br>
+<table width=100% border=0 cellpadding=1 cellspacing=0 >
+
+<tr>
+<td nowrap class=Font11 colspan=2>
+<u>Description Menu.Run</u>
+</td>
+</tr>
+
+<tr>
+<td nowrap class=Font10 >
+<b>Menu.Run();</b>
+</td>
+<td class=Font10 width=100%>
+// Run Menu engine
+</td>
+</tr>
+</table>
+
+<hr>
+
+<table width=100%>
+<tr>
+<td class=Font11 width=100% nowrap align=right>
+Best regards
+<br>Eduard Filimonov
+</td>
+</tr>
+</table>
+
+<br color=#FFFFCC>
+
+
+<table bgcolor=#FFFFCC width=100% class=block>
+<tr>
+<td nowrap align=center class=Font11>
+
+Copyright (?) 2002 Eduard Filimonov
+<br>Web-page: <a href="http://filed.newmail.ru">http://filed.newmail.ru</a>
+<br>E-mail: <a href="mailto:filimoned@newmail.ru">filimoned@newmail.ru</a>
+<br>Uzhgorod, Ukraine
+
+</td>
+</tr>
+</table>
+
+
+</BODY>
+</HTML>

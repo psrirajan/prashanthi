@@ -1,0 +1,106 @@
+<head>
+<style type="text/css">
+#menuOut, #menuIn
+{
+position:absolute;
+left: -161px;
+width:180px;
+top:60px;
+border:1.5px solid silver;
+background-color: #E9F0F8;
+layer-background-color: gray;
+font: bold 12px Verdana;
+color: #ffffff;
+line-height: 20px;
+padding: 10px;
+padding-left: 15px;
+line-height: 110%;
+}
+A:link {font: bold 12px arial; color: #004891; text-decoration: none;}
+A:visited {font: bold 12px arial; color: #004891; text-decoration: none;}
+A:hover {font: bold 12px arial; color: #004891; text-decoration: underline;}
+</style>
+</head>
+<body>
+<div style="width: 500px;">
+<script language="JavaScript">
+<!-- hiding
+if (document.all)
+document.write('<div id="menuIn" style="left:-161" onMouseover="pull()" onMouseout="draw()">')
+//  End hiding-->
+</script>
+<layer id="menuOut" onMouseover="pull()" onMouseout="draw()">
+<script language="JavaScript">
+<!-- Begin
+var siteName = new Array();
+var siteLink = new Array();
+siteName[0] = "&middot; &nbsp;Home";
+siteName[1] = "&middot; &nbsp;Hosting and Domains";
+siteName[2] = "&middot; &nbsp;Web Tools and Services";
+siteName[3] = "&middot; &nbsp;Developer Resources";
+siteName[4] = "&middot; &nbsp;Help";
+siteName[5] = "&middot; &nbsp;Site Map";
+siteLink[0] = "Link Goes Here Include http:// ";
+siteLink[1] = "Link Goes Here Include http:// ";
+siteLink[2] = "Link Goes Here Include http:// ";
+siteLink[3] = "Link Goes Here Include http:// ";
+siteLink[4] = "Link Goes Here Include http:// ";
+siteLink[5] = "Link Goes Here Include http:// ";
+for (i = 0; i <= siteName.length - 1; i++)
+document.write('<a href=' + siteLink[i] + '>' + siteName[i] + '</a><br>');
+//  End -->
+</script>
+</layer>
+<script language="JavaScript">
+<!-- Begin
+function regenerate() {
+window.location.reload();
+}
+function regenerate2() {
+if (document.layers)
+setTimeout("window.onresize=regenerate", 400);
+}
+window.onload = regenerate2;
+if (document.all) {
+document.write('</div>');
+slideMenu = document.all.menuIn.style;
+boundryR = 0;
+boundryL = -161;
+}
+else {
+slideMenu = document.layers.menuOut;
+boundryR = 161;
+boundryL = 10;
+}
+function pull() {
+if (window.drawMenu)
+clearInterval(drawMenu);
+pullMenu = setInterval("pullEngine()", 50);
+}
+function draw() {
+clearInterval(pullMenu);
+drawMenu = setInterval("drawEngine()", 50);
+}
+function pullEngine() {
+if (document.all && slideMenu.pixelLeft < boundryR)
+slideMenu.pixelLeft += 5;
+else if(document.layers && slideMenu.left < boundryR)
+slideMenu.left += 5;
+else if (window.pullMenu)
+clearInterval(pullMenu);
+}
+function drawEngine() {
+if (document.all && slideMenu.pixelLeft > boundryL)
+slideMenu.pixelLeft -= 5;
+else if(document.layers && slideMenu.left > boundryL)
+slideMenu.left -= 5;
+else if (window.drawMenu)
+clearInterval(drawMenu);
+}
+//  End -->
+</script>
+<center>
+Try the menu out for yourself!  Move your mouse over the blue border to the left.
+</center>
+</div>
+</body>
